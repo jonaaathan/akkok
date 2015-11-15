@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Iteration',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
+                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
                 ('iteration_number', models.IntegerField()),
                 ('active', models.BooleanField(default=False)),
             ],
@@ -22,24 +22,24 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Iterations_Developers',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
+                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
                 ('active', models.BooleanField(default=False)),
                 ('developer', models.ForeignKey(to='users.Developer')),
                 ('iteration', models.ForeignKey(to='projects.Iteration')),
             ],
         ),
         migrations.CreateModel(
-            name='Phrase',
+            name='Phase',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
-                ('phrase_type', models.IntegerField(choices=[(1, 'Inception'), (2, 'Elaboration'), (3, 'Construction'), (4, 'Transition')])),
+                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('phase_type', models.IntegerField()),
                 ('active', models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(
             name='Project',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
+                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
                 ('name', models.CharField(max_length=100)),
                 ('start_date', models.DateTimeField(blank=True, null=True)),
                 ('end_date', models.DateTimeField(blank=True, null=True)),
@@ -48,13 +48,13 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.AddField(
-            model_name='phrase',
+            model_name='phase',
             name='project',
             field=models.ForeignKey(to='projects.Project'),
         ),
         migrations.AddField(
             model_name='iteration',
-            name='phrase',
-            field=models.ForeignKey(to='projects.Phrase'),
+            name='phase',
+            field=models.ForeignKey(to='projects.Phase'),
         ),
     ]

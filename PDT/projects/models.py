@@ -1,3 +1,8 @@
+##Questions:
+# After Manager create a project, the project is auto started?
+# After a project is started, the phases is auto started?
+# After a phases is started, the iteration is auto started?
+# #
 from django.db import models
 from datetime import datetime
 class Project(models.Model):
@@ -35,41 +40,41 @@ class Project(models.Model):
 		self.active = False
 		self.end_date = datetime.now()
 
-		## disable all active phrase
-		ps = self.phrase_set.filter(active = True)
+		## disable all active phase
+		ps = self.phase_set.filter(active = True)
 		for p in ps:
 			p.stop()
 		self.save()
 		return True
 
-	def get_current_phrase_str(self): ## tested
-		p = self.get_current_phrase(request_manager).phrase_type
+	def get_current_phase_str(self): ## tested
+		p = self.get_current_phase(request_manager).phase_type
 		if p == 0:
 			return None
-		return Phrase.PHRASE_OPTIONS[p-1]
+		return Phase.PHASE_OPTIONS[p-1]
 
-	def get_current_phrase(self, request_manager): ## tested
-		current_phrase = self.phrase_set.filter(active = True)
-		if not current_phrase: ## empty list
+	def get_current_phase(self, request_manager): ## tested
+		current_phase = self.phase_set.filter(active = True)
+		if not current_phase: ## empty list
 			return None
-		return current_phrase[0]
+		return current_phase[0]
 
-	def next_phrase(self, request_manager): ## tested
+	def next_phase(self, request_manager): ## tested
 		if not self.active:
 			print("Project Stop")
 			return
-		curr_phrase = self.get_current_phrase(request_manager)
-		if curr_phrase == None:
-			next_phrase = 1
+		curr_phase = self.get_current_phase(request_manager)
+		if curr_phase == None:
+			next_phase = 1
 		else:
-			next_phrase =  curr_phrase.phrase_type + 1
-			## disable prev phrase
-			curr_phrase.stop()
+			next_phase =  curr_phase.phase_type + 1
+			## disable prev phase
+			curr_phase.stop()
 		
-		print(next_phrase)
+		print(next_phase)
 		
-		if next_phrase <= 4:
-			p = Phrase(phrase_type = next_phrase)
+		if next_phase <= 4:
+			p = Phase(phase_type = next_phase)
 			p.project = self
 			p.active = True ## auto start
 			p.save()
@@ -78,13 +83,13 @@ class Project(models.Model):
 			print('project ends')
 
 
-class Phrase(models.Model):
-	PHRASE_OPTIONS = ['Inception', 'Elaboration', 'Construction', 'Transition']
-	phrase_type = models.IntegerField()
-	## 1 phrase has 1 project
-	## 1 project has many phrase
+class Phase(models.Model):
+	PHASE_OPTIONS = ['Inception', 'Elaboration', 'Construction', 'Transition']
+	phase_type = models.IntegerField()
+	## 1 phase has 1 project
+	## 1 project has many(max 4) phase
 	project = models.ForeignKey(Project)
-	## But project has only one active phrase
+	## But project has only one active phase
 	active = models.BooleanField(default= False)
 
 	def start(self): ## tested
@@ -95,16 +100,17 @@ class Phrase(models.Model):
 		self.active = False
 		self.save()
 
+
 class Iteration(models.Model):
 	iteration_number = models.IntegerField()
-	## 1 iteration has 1 phrase
-	## 1 phrase has many iteration
-	phrase = models.ForeignKey(Phrase)
-	## But phrase has only one active iteration
+	## 1 iteration has 1 phase
+	## 1 phase has many iteration
+	phase = models.ForeignKey(Phase)
+	## But phase has only one active iteration
 	active = models.BooleanField(default = False)
 
 class Iterations_Developers(models.Model):
-	## Many to Many: Users to Projects
+	## Many to Many: Developers to Projects
 	developer = models.ForeignKey('users.Developer')
 	iteration = models.ForeignKey(Iteration)
 	active = models.BooleanField(default = False)

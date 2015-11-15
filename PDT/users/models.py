@@ -32,8 +32,8 @@ class Manager(User):
 	def stop_project(self, project):
 		return project.stop(self)
 
-	def project_next_phrase(self, project):
-		return project.next_phrase(self)
+	def project_next_phase(self, project):
+		return project.next_phase(self)
 
 	
 class Developer(User):

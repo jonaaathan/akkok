@@ -1,8 +1,10 @@
 from django.db import models
-
-
+from users.models import Manager, Deverloper
 
 class Project(models.Model):
+	# 1 project has 1 manager
+	# 1 manager has many projects
+	manager = models.ForeignKey(Manager)
 	name = models.CharField(max_length = 100)
 	start_date = models.DateTimeField(null = True, blank = True)
 	end_date = models.DateTimeField(null = True, blank = True)
@@ -21,4 +23,10 @@ class Iteration(models.Model):
 	## 1 pharse has many iteration
 	pharse = models.ForeignKey(Pharse)
 	## But pharse has only one active iteration
+	active = models.BooleanField(default = False)
+
+class Iterations_Deverlopers(models.Model):
+	## Many to Many: Users to Projects
+	deverloper = models.ForeignKey(Deverloper)
+	iteration = models.ForeignKey(Iteration)
 	active = models.BooleanField(default = False)

@@ -7,30 +7,43 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('users', '0001_initial'),
     ]
 
     operations = [
         migrations.CreateModel(
             name='Iteration',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('id', models.AutoField(auto_created=True, primary_key=True, verbose_name='ID', serialize=False)),
                 ('iteration_number', models.IntegerField()),
+                ('active', models.BooleanField(default=False)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Iterations_Deverlopers',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, verbose_name='ID', serialize=False)),
+                ('active', models.BooleanField(default=False)),
+                ('deverloper', models.ForeignKey(to='users.Deverloper')),
+                ('iteration', models.ForeignKey(to='projects.Iteration')),
             ],
         ),
         migrations.CreateModel(
             name='Pharse',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('id', models.AutoField(auto_created=True, primary_key=True, verbose_name='ID', serialize=False)),
                 ('pharse_type', models.CharField(max_length=100)),
+                ('active', models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(
             name='Project',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('id', models.AutoField(auto_created=True, primary_key=True, verbose_name='ID', serialize=False)),
                 ('name', models.CharField(max_length=100)),
                 ('start_date', models.DateTimeField(blank=True, null=True)),
                 ('end_date', models.DateTimeField(blank=True, null=True)),
+                ('manager', models.ForeignKey(to='users.Manager')),
             ],
         ),
         migrations.AddField(

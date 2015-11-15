@@ -14,46 +14,46 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Iteration',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, verbose_name='ID', serialize=False)),
+                ('id', models.AutoField(auto_created=True, verbose_name='ID', serialize=False, primary_key=True)),
                 ('iteration_number', models.IntegerField()),
                 ('active', models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(
-            name='Iterations_Deverlopers',
+            name='Iterations_Developers',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, verbose_name='ID', serialize=False)),
+                ('id', models.AutoField(auto_created=True, verbose_name='ID', serialize=False, primary_key=True)),
                 ('active', models.BooleanField(default=False)),
-                ('deverloper', models.ForeignKey(to='users.Deverloper')),
+                ('developer', models.ForeignKey(to='users.Developer')),
                 ('iteration', models.ForeignKey(to='projects.Iteration')),
             ],
         ),
         migrations.CreateModel(
-            name='Pharse',
+            name='Phrase',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, verbose_name='ID', serialize=False)),
-                ('pharse_type', models.CharField(max_length=100)),
+                ('id', models.AutoField(auto_created=True, verbose_name='ID', serialize=False, primary_key=True)),
+                ('phrase_type', models.CharField(max_length=100)),
                 ('active', models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(
             name='Project',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, verbose_name='ID', serialize=False)),
+                ('id', models.AutoField(auto_created=True, verbose_name='ID', serialize=False, primary_key=True)),
                 ('name', models.CharField(max_length=100)),
-                ('start_date', models.DateTimeField(blank=True, null=True)),
-                ('end_date', models.DateTimeField(blank=True, null=True)),
+                ('start_date', models.DateTimeField(null=True, blank=True)),
+                ('end_date', models.DateTimeField(null=True, blank=True)),
                 ('manager', models.ForeignKey(to='users.Manager')),
             ],
         ),
         migrations.AddField(
-            model_name='pharse',
+            model_name='phrase',
             name='project',
             field=models.ForeignKey(to='projects.Project'),
         ),
         migrations.AddField(
             model_name='iteration',
-            name='pharse',
-            field=models.ForeignKey(to='projects.Pharse'),
+            name='phrase',
+            field=models.ForeignKey(to='projects.Phrase'),
         ),
     ]

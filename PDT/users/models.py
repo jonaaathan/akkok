@@ -26,13 +26,13 @@ class Manager(User):
 		project = Project(name=project_name)
 		self.add_project(project)
 
-	def start_project(self, project):
+	def start_project(self, project): #tested
 		return project.start(self)
 	
-	def stop_project(self, project):
+	def stop_project(self, project): #tested
 		return project.stop(self)
 
-	def project_next_phase(self, project):
+	def project_next_phase(self, project): #tested
 		return project.next_phase(self)
 
 	

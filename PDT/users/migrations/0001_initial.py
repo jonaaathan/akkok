@@ -13,9 +13,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Developer',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', serialize=False, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
                 ('name', models.CharField(max_length=100)),
-                ('staff_id', models.IntegerField()),
+                ('staff_id', models.IntegerField(unique=True)),
                 ('password', models.CharField(max_length=100)),
             ],
             options={
@@ -25,9 +25,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Manager',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', serialize=False, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
                 ('name', models.CharField(max_length=100)),
-                ('staff_id', models.IntegerField()),
+                ('staff_id', models.IntegerField(unique=True)),
                 ('password', models.CharField(max_length=100)),
             ],
             options={

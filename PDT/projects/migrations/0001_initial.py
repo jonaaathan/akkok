@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Iteration',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', serialize=False, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
                 ('iteration_number', models.IntegerField()),
                 ('active', models.BooleanField(default=False)),
             ],
@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Iterations_Developers',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', serialize=False, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
                 ('active', models.BooleanField(default=False)),
                 ('developer', models.ForeignKey(to='users.Developer')),
                 ('iteration', models.ForeignKey(to='projects.Iteration')),
@@ -31,18 +31,19 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Phrase',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', serialize=False, primary_key=True)),
-                ('phrase_type', models.CharField(max_length=100)),
+                ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
+                ('phrase_type', models.IntegerField(choices=[(1, 'Inception'), (2, 'Elaboration'), (3, 'Construction'), (4, 'Transition')])),
                 ('active', models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(
             name='Project',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', serialize=False, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
                 ('name', models.CharField(max_length=100)),
-                ('start_date', models.DateTimeField(null=True, blank=True)),
-                ('end_date', models.DateTimeField(null=True, blank=True)),
+                ('start_date', models.DateTimeField(blank=True, null=True)),
+                ('end_date', models.DateTimeField(blank=True, null=True)),
+                ('active', models.BooleanField(default=False)),
                 ('manager', models.ForeignKey(to='users.Manager')),
             ],
         ),

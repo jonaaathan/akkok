@@ -12,7 +12,10 @@ class User(models.Model):
 # Actual Manager Class
 class Manager(User):
 	def get_project_by_id(self, p_id): #tested
-		return self.project_set.get(id=p_id)
+		try:
+			return self.project_set.get(id=p_id)
+		except Project.DoesNotExist:
+			return None
 
 	def add_project(self, p): #tested
 		p.manager = self
@@ -24,10 +27,13 @@ class Manager(User):
 		self.add_project(project)
 
 	def start_project(self, project):
-		project.start(self)
+		return project.start(self)
 	
 	def stop_project(self, project):
-		project.stop(self)
+		return project.stop(self)
+
+	def project_next_phrase(self, project):
+		return project.next_phrase(self)
 
 	
 class Developer(User):

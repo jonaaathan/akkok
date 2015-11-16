@@ -203,7 +203,7 @@ class Iteration(models.Model):
 		self.save()
 		return True
 
-class Iterations_Developers(models.Model):
+class Timer(models.Model):
 	## Many to Many: Developers to Projects
 	developer = models.ForeignKey('users.Developer')
 	iteration = models.ForeignKey(Iteration)

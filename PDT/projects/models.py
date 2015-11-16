@@ -14,6 +14,8 @@ class Project(models.Model):
 	start_date = models.DateTimeField(null = True, blank = True)
 	end_date = models.DateTimeField(null = True, blank = True)
 	active = models.BooleanField(default=False)
+	curr_phase = models.IntegerField(default=0)
+
 	## getters
 	def get_status(self): #tested
 		return self.active
@@ -43,44 +45,66 @@ class Project(models.Model):
 		## disable all active phase
 		ps = self.phase_set.filter(active = True)
 		for p in ps:
-			p.stop()
+			p.stop(self)
 		self.save()
 		return True
 
 	def get_current_phase_str(self): ## tested
-		p = self.get_current_phase(request_manager).phase_type
+		p = self.curr_phase
 		if p == 0:
-			return None
+			return "The project doesnt has any phase"
 		return Phase.PHASE_OPTIONS[p-1]
 
-	def get_current_phase(self, request_manager): ## tested
-		current_phase = self.phase_set.filter(active = True)
+	def get_current_phase(self): ## tested
+		current_phase = self.phase_set.filter(phase_type = 1)
 		if not current_phase: ## empty list
 			return None
 		return current_phase[0]
 
+	def create_phase(self, request_manager, phase_type): ## tested
+		if request_manager != self.manager:
+			return False
+		## check for repeat phase type
+		phase_types_lst = [p.phase_type for p in self.phase_set.all()]
+		if phase_type in phase_types_lst :
+			return False
+		## create phase
+		p = Phase(phase_type = phase_type)
+		p.project = self
+		p.save()
+		return True
+
 	def next_phase(self, request_manager): ## tested
+		if request_manager != self.manager:
+			return None
 		if not self.active:
-			print("Project Stop")
-			return
-		curr_phase = self.get_current_phase(request_manager)
-		if curr_phase == None:
-			next_phase = 1
-		else:
-			next_phase =  curr_phase.phase_type + 1
-			## disable prev phase
-			curr_phase.stop()
-		
-		print(next_phase)
-		
+			return None
+		## get next phase type
+		next_phase =  self.curr_phase + 1
+
 		if next_phase <= 4:
-			p = Phase(phase_type = next_phase)
-			p.project = self
-			p.active = True ## auto start
-			p.save()
+
+			return next_phase
 		else:
 			self.active = False
-			print('project ends')
+			return None
+
+	def start_phase(self, request_manager, phase_type):
+		if request_manager != self.manager:
+			return False
+		## stop all other phase
+		if self.phase_set.count():
+			phases = self.phase_set.all()
+			for p in phases:
+				p.stop(self)
+		## get the object
+		phase = self.phase_set.filter(phase_type = phase_type)
+		if not phase:
+			return False
+		if phase[0].start(self):
+			self.curr_phase = phase_type
+			return True
+
 
 
 class Phase(models.Model):
@@ -92,13 +116,22 @@ class Phase(models.Model):
 	## But project has only one active phase
 	active = models.BooleanField(default= False)
 
-	def start(self): ## tested
+	def get_status(self): #tested
+		return self.active
+
+	def start(self, request_project): ## tested
+		if request_project != self.project:
+			return False
 		self.active = True
 		self.save()
+		return True
 
-	def stop(self): ## tested
+	def stop(self, request_project): ## tested
+		if request_project != self.project:
+			return False
 		self.active = False
 		self.save()
+		return True
 
 
 class Iteration(models.Model):

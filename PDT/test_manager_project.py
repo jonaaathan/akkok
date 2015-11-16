@@ -17,7 +17,6 @@ if m.start_project(project):
 for i in range(5):	
 	nxt = m.project_next_phase(project)
 	if nxt:
-		print("The current phase is: " + project.get_current_phase_str())
 		print("The nxt phase is: " + str(nxt))
 		if m.project_create_phase(project, nxt):
 			print("new phase created")
@@ -25,6 +24,8 @@ for i in range(5):
 			print("cannot create new phase")
 		if m.project_start_phase(project, nxt):
 			print("the phase is started")
+		print("The current phase is: " + project.get_current_phase_str())
+		print("current active phase: " + str(len(project.phase_set.filter(active=True))))
 	else:
 		print("Cannot go nxt phase")
 

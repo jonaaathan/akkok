@@ -1,0 +1,11 @@
+## project functions:
+create_project(manager, project name) return project_id
+start_project(manager, project_id) return T/F
+stop_project(manager, project_id) return T/F
+create_phase(manager, project_id, phase_type) return T/F
+next_phase(project_id) return next phase_type
+switch_phase(manager, project_id, phase_type) return T/F 
+
+create_iteration(manager, project_id, iteration_number) return T/F
+switch_iteration(manager, project_id iteration_number) return T/F
+next_iteration(project_id) return next iteration_number

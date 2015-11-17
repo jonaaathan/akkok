@@ -5,6 +5,12 @@
 # #
 from django.db import models
 from datetime import datetime
+
+
+# class ProjectIterface():
+# 	def create_project(self, manager, project_name):
+		
+
 class Project(models.Model):
 	## 1 project has 1 manager
 	## 1 manager has many projects

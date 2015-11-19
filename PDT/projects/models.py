@@ -5,12 +5,6 @@
 # #
 from django.db import models
 from datetime import datetime
-
-
-# class ProjectIterface():
-# 	def create_project(self, manager, project_name):
-		
-
 class Project(models.Model):
 	## 1 project has 1 manager
 	## 1 manager has many projects
@@ -21,6 +15,9 @@ class Project(models.Model):
 	end_date = models.DateTimeField(null = True, blank = True)
 	active = models.BooleanField(default=False)
 	curr_phase = models.IntegerField(default=0)
+
+	def __str__(self):
+		return self.name
 
 	## getters
 	def get_status(self): #tested
@@ -51,19 +48,18 @@ class Project(models.Model):
 		## disable all active phase
 		ps = self.phase_set.filter(active = True)
 		for p in ps:
-			p.stop(request_manager)
+			p.stop(self)
 		self.save()
 		return True
 
 	def get_current_phase_str(self): ## tested
-		p = self.get_current_phase()
-		if not p:
+		p = self.curr_phase
+		if p == 0:
 			return "The project doesnt has any phase"
-		return str(p)
-		
+		return Phase.PHASE_OPTIONS[p-1]
 
 	def get_current_phase(self): ## tested
-		current_phase = self.phase_set.filter(phase_type = self.curr_phase)
+		current_phase = self.phase_set.filter(phase_type = 1)
 		if not current_phase: ## empty list
 			return None
 		return current_phase[0]
@@ -81,30 +77,37 @@ class Project(models.Model):
 		p.save()
 		return True
 
-	def next_phase(self): ## tested
+	def next_phase(self, request_manager): ## tested
+		if request_manager != self.manager:
+			return None
+		if not self.active:
+			return None
+		## get next phase type
 		next_phase =  self.curr_phase + 1
+
 		if next_phase <= 4:
+
 			return next_phase
 		else:
+			self.active = False
 			return None
 
-	def switch_phase(self, request_manager, phase_type):
+	def start_phase(self, request_manager, phase_type):
 		if request_manager != self.manager:
 			return False
-		## stop all other active phase
-		phases = self.phase_set.filter(active = True)
-		for p in phases:
-			p.stop(request_manager)
+		## stop all other phase
+		if self.phase_set.count():
+			phases = self.phase_set.all()
+			for p in phases:
+				p.stop(self)
 		## get the object
 		phase = self.phase_set.filter(phase_type = phase_type)
 		if not phase:
 			return False
-		if phase[0].start(request_manager):
+		if phase[0].start(self):
 			self.curr_phase = phase_type
-			self.save()
 			return True
-		else:
-			return False
+
 
 
 class Phase(models.Model):
@@ -115,75 +118,27 @@ class Phase(models.Model):
 	project = models.ForeignKey(Project)
 	## But project has only one active phase
 	active = models.BooleanField(default= False)
-	curr_iteration = models.IntegerField(default = 0)
+
 	def __str__(self):
-		return Phase.PHASE_OPTIONS[self.phase_type-1]
+		return self.phase_type
 
 	def get_status(self): #tested
 		return self.active
 
-	def start(self, request_manager): ## tested
-		if self.project.manager != request_manager:
+	def start(self, request_project): ## tested
+		if request_project != self.project:
 			return False
 		self.active = True
 		self.save()
 		return True
 
-	def stop(self, request_manager): ## tested
-		if self.project.manager != request_manager:
+	def stop(self, request_project): ## tested
+		if request_project != self.project:
 			return False
 		self.active = False
 		self.save()
 		return True
 
-	def create_iteration(self, request_manager, iteration_number):
-		if self.project.manager != request_manager:
-			return False
-		## check repeat
-		if iteration_number in [i.iteration_number for i in self.iteration_set.all()]:
-			return False
-		## create
-		iteration = Iteration(iteration_number = iteration_number)
-		iteration.phase = self
-		iteration.save()
-		return True
-
-	def switch_iteration(self, request_manager, iteration_number):
-		if self.project.manager != request_manager:
-			return False
-		## stop all other active iteration
-		iterations = self.iteration_set.filter(active = True)
-		for i in iterations:
-			i.stop(request_manager)
-		## get the object
-		iteration = self.iteration_set.filter(iteration_number = iteration_number)
-
-		if not iteration:
-			return False
-		if iteration[0].start(request_manager):
-			self.curr_iteration = iteration_number
-			self.save()
-			return True	
-		else:
-			return False
-
-	def next_iteration(self):
-		lst =[i.iteration_number for i in self.iteration_set.all()]
-		if not lst:
-			return 1
-		return max(lst) + 1
-
-	def get_current_iteration(self): ## tested
-		current_iteration = self.iteration_set.filter(iteration_number = self.curr_iteration)
-		if not current_iteration: ## empty list
-			return None
-		return current_iteration[0]
-
-	def get_current_iteration_str(self): ## tested
-		i = self.get_current_iteration()
-		if not i:
-			return "The pharse doesnt has any iteration"
-		return str(i)
 
 class Iteration(models.Model):
 	iteration_number = models.IntegerField()
@@ -192,25 +147,15 @@ class Iteration(models.Model):
 	phase = models.ForeignKey(Phase)
 	## But phase has only one active iteration
 	active = models.BooleanField(default = False)
-	def __str__(self):
-		return str(self.phase) + "-" + str(self.iteration_number)
-	
-	def start(self, request_manager):
-		if request_manager != self.phase.project.manager:
-			return False
-		self.active = True
-		self.save()
-		return True
-	
-	def stop(self, request_manager):
-		if request_manager != self.phase.project.manager:
-			return False
-		self.active = False
-		self.save()
-		return True
 
-class Timer(models.Model):
+	def __str__(self):
+		return self.iteration_number
+
+class Iterations_Developers(models.Model):
 	## Many to Many: Developers to Projects
 	developer = models.ForeignKey('users.Developer')
 	iteration = models.ForeignKey(Iteration)
 	active = models.BooleanField(default = False)
+
+	def __str__(self):
+		return self.developer

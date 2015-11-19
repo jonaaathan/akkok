@@ -1,0 +1,11 @@
+{% if manager_list %}
+    <ul>
+    {% for manager in manager_list %}
+        <li><a href="/users/{{ manager.id }}/">{{ manager.staff_id }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No managers are available.</p>
+{% endif %}
+	<a href="register.html"> Register Here</a>
+	<a href="login.html">login</a>

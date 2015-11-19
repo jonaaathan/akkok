@@ -1,16 +1,25 @@
 from django.db import models
 from projects.models import Project, Iteration
+from django.contrib.auth.models import User
 
 # Abstract User Class
-class User(models.Model):
-	name = models.CharField(max_length=100)
+class UserProfile(models.Model):
 	staff_id = models.IntegerField(unique = True)
-	password = models.CharField(max_length=100)
+	#user = models.OneToOneField(User)#, default=-1)
+	user = models.ForeignKey(User, null=True)#, default=-1)
+	#name = models.CharField(max_length=100)
+	#password = models.CharField(max_length=100)
+
+	def __str__(self):
+		return self.user.username
+
 	class Meta:
 		abstract = True
 
 # Actual Manager Class
-class Manager(User):
+class Manager(UserProfile):
+	def __str__(self):
+		return self.username
 	def get_project_by_id(self, p_id): #tested
 		try:
 			return self.project_set.get(id=p_id)
@@ -33,8 +42,16 @@ class Manager(User):
 	def stop_project(self, project): #tested
 		return project.stop(self)
 
+	def project_create_phase(self, project, phase_type): ## tested
+		return project.create_phase(self, phase_type)
 
-class Developer(User):
+	def project_next_phase(self, project): #tested
+		return project.next_phase(self)
+
+	def project_start_phase(self, project, phase_type):
+		return project.start_phase(self, phase_type)
+	
+class Developer(UserProfile):
 	def add_iteration(self, i):
 		self.iteration_set.add(i)
 
@@ -43,5 +60,3 @@ class Developer(User):
 
 	def get_num_iterations(self):
 		return self.iteration_set.count()
-
-

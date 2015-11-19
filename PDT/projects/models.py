@@ -5,11 +5,12 @@
 # #
 from django.db import models
 from datetime import datetime
+from django.contrib.auth.models import User
 class Project(models.Model):
 	## 1 project has 1 manager
 	## 1 manager has many projects
 	## use 'users.Manager' to avoid circular import issuse
-	manager = models.ForeignKey('users.Manager') 
+	manager = models.ForeignKey(User) 
 	name = models.CharField(max_length = 100)
 	start_date = models.DateTimeField(null = True, blank = True)
 	end_date = models.DateTimeField(null = True, blank = True)
@@ -153,7 +154,7 @@ class Iteration(models.Model):
 
 class Iterations_Developers(models.Model):
 	## Many to Many: Developers to Projects
-	developer = models.ForeignKey('users.Developer')
+	developer = models.ForeignKey(User)
 	iteration = models.ForeignKey(Iteration)
 	active = models.BooleanField(default = False)
 

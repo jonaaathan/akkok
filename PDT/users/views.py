@@ -2,11 +2,11 @@ from django.shortcuts import render
 from users.forms import UserForm, UserProfileForm
 from django.http import HttpResponse
 from django.template import RequestContext, loader
-from users.models import Manager
+from users.models import UserProfile
 
 def index(request):
     
-    manager_list = Manager.objects.all()[:5]
+    manager_list = UserProfile.objects.all()[:5]
     context = {'manager_list': manager_list}
     return render(request, 'users/index.html', context)
     

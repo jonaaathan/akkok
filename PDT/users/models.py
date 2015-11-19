@@ -5,21 +5,18 @@ from django.contrib.auth.models import User
 # Abstract User Class
 class UserProfile(models.Model):
 	staff_id = models.IntegerField(unique = True)
-	#user = models.OneToOneField(User)#, default=-1)
-	user = models.ForeignKey(User, null=True)#, default=-1)
+	number_project_involved = models.IntegerField()
+	role = models.CharField(max_length=1)#enum
+	#work_time = dateTimeField()
+	user = models.OneToOneField(User)
 	#name = models.CharField(max_length=100)
 	#password = models.CharField(max_length=100)
-
-	def __str__(self):
-		return self.user.username
-
+'''
 	class Meta:
 		abstract = True
 
 # Actual Manager Class
 class Manager(UserProfile):
-	def __str__(self):
-		return self.username
 	def get_project_by_id(self, p_id): #tested
 		try:
 			return self.project_set.get(id=p_id)
@@ -60,3 +57,4 @@ class Developer(UserProfile):
 
 	def get_num_iterations(self):
 		return self.iteration_set.count()
+'''
